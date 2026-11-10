@@ -163,7 +163,7 @@ git --version
 Скачайте проект под этим именем и установите зависимости:
 
 ```bash
-git clone https://github.com/konstshakurov/Ai_RE_Project.git <name_id>
+git clone https://gitlab.simbirsoft.com/konstantin.shakurov/Ai_RE_Project.git <name_id>
 cd <name_id>
 python -m pip install -r requirements.txt
 ```
