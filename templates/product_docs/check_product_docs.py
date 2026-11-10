@@ -156,7 +156,9 @@ def check(project: str, fix: bool) -> Report:
             comp_refs.add(c)
             if not (DOCS / "02_system_components" / c).is_dir():
                 rep.err(f"{bf}: компонент {c} не найден в 02_system_components/")
-        comps = [c.name for c in (DOCS / "02_system_components").glob("*/")]
+        # каталоги только: на Python < 3.13 glob("*/")-match файлы тоже,
+        # и файл-заглушка .gitkeep считался бы компонентом
+        comps = [c.name for c in (DOCS / "02_system_components").glob("*") if c.is_dir()]
         mentioned = [c for c in comps if re.search(r"(?<!\w)" + re.escape(c) + r"(?!\w)", comp_text)]
         comp_refs.update(mentioned)
         if status == "implemented" and not mentioned:
@@ -188,7 +190,9 @@ def check(project: str, fix: bool) -> Report:
                  + ", ".join(sorted(uc)[:8]) + (" …" if len(uc) > 8 else ""))
 
     # --- компоненты ---
-    for comp in sorted((DOCS / "02_system_components").glob("*/")):
+    # glob("*") + is_dir(): на Python < 3.13 glob("*/") матчит и файлы,
+    # и файл-заглушка .gitkeep считался бы компонентом
+    for comp in sorted(c for c in (DOCS / "02_system_components").glob("*") if c.is_dir()):
         if not (comp / "README.md").exists():
             rep.err(f"компонент {comp.name}: нет README.md (SRV)")
         if comp.name not in comp_refs:
